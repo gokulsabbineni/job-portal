@@ -1,7 +1,8 @@
-package api
+package userManagement
 
 import (
 	"encoding/json"
+	"job-portal/model"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,15 +11,31 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func createUser(db *mongo.Client) http.HandlerFunc {
+type Handler struct {
+	biz IBizlogic
+}
+
+func NewHandler(db *mongo.Client) Handler {
+	return Handler(biz.NewBizlogic(db))
+}
+
+func {h Handler}createUser(db *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method is not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		if err := AddLogic(db, w, r); err != nil {
+
+		var user model.User
+		if err := json.Decoder(r.Body).Decode(&user); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+
+		if err := AddLogic(user); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
 	}
 }
 

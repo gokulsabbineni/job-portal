@@ -1,10 +1,10 @@
 package dataservice
 
 import (
-	"Project/model"
 	"context"
 	"encoding/json"
 	"fmt"
+	"job-portal/model"
 	"net/http"
 
 	"go.mongodb.org/mongo-driver/bson"
