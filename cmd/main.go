@@ -19,6 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer func() {
+		log.Println("here")
 		if err := client.Disconnect(context.Background()); err != nil {
 			log.Fatal(err)
 		}
