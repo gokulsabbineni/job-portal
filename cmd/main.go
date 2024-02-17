@@ -1,9 +1,9 @@
 package main
 
 import (
-	api "Project/api/userManagement"
 	"context"
 	"fmt"
+	"job-portal/api/userManagement"
 	"log"
 	"net/http"
 
@@ -31,7 +31,7 @@ func main() {
 	}
 	fmt.Println("Connected to MongoDB!")
 	router := mux.NewRouter()
-	api.RegisterRoutes(router, client)
+	userManagement.RegisterRoutes(router, client)
 
 	log.Println("Server starting on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", router))

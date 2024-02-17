@@ -1,4 +1,4 @@
-package api
+package userManagement
 
 import (
 	"net/http"
@@ -9,7 +9,8 @@ import (
 
 func RegisterRoutes(router *mux.Router, db *mongo.Client) {
 
-	router.HandleFunc("/users", createUser(db))
+	h := NewHandler(db)
+	router.HandleFunc("/users", h.createUser(db))
 	router.HandleFunc("/users/list/{id}", getUser(db)).Methods(http.MethodGet)
 	router.HandleFunc("/users/update/{id}", func(w http.ResponseWriter, r *http.Request) { updateUser(db, w, r) }).Methods(http.MethodPut)
 

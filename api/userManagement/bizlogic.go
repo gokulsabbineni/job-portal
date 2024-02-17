@@ -1,17 +1,29 @@
-package api
+package userManagement
 
 import (
-	"Project/dataservice"
-	"Project/model"
 	"fmt"
+	"job-portal/dataservice"
+	"job-portal/model"
 	"net/http"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func AddLogic(db *mongo.Client, w http.ResponseWriter, r *http.Request) error {
-	return dataservice.AddUser(db, w, r)
+type IBizlogic interface {
+	AddLogic(user model.User) error
+}
+
+type Bizlogic struct {
+	DB *mongo.Client
+}
+
+func NewBizlogic(db *mongo.Client) *Bizlogic {
+	return &Bizlogic{DB: db}
+}
+
+func (bl *Bizlogic) AddLogic(user model.User) error {
+	return dataservice.AddUser(bl.DB, user)
 }
 
 func GetUserByID(client *mongo.Client, userID int) (model.User, error) {
