@@ -1,6 +1,8 @@
 package main
 
 import (
+	jobApi "Project/api/jobListing"
+	matchApi "Project/api/matchedResume"
 	resumeApi "Project/api/resume"
 	userApi "Project/api/userManagement"
 	"context"
@@ -35,6 +37,8 @@ func main() {
 	router := mux.NewRouter()
 	userApi.RegisterRoutes(router, client)
 	resumeApi.RegisterRoutes(router, client)
+	jobApi.RegisterRoutes(router, client)
+	matchApi.RegisterRoutes(router, client)
 
 	log.Println("Server starting on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", router))

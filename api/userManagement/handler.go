@@ -1,4 +1,4 @@
-package api
+package userManagement
 
 import (
 	"encoding/json"

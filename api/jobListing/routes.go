@@ -1,4 +1,4 @@
-package resume
+package jobListing
 
 import (
 	"github.com/gorilla/mux"
@@ -6,6 +6,6 @@ import (
 )
 
 func RegisterRoutes(router *mux.Router, db *mongo.Client) {
-	router.HandleFunc("/resumes", addResume(db))
-	router.HandleFunc("/getresumes/{id}", getResume(db)).Methods("GET")
+	router.HandleFunc("/createjob", createJob(db))
+	router.HandleFunc("/getjob/{id}", getJob(db)).Methods("GET")
 }

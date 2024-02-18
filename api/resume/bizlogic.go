@@ -35,7 +35,7 @@ func AddResumeLogic(db *mongo.Client, w http.ResponseWriter, r *http.Request) er
 		return err
 	}
 
-	cmd := exec.Command("D:\\Anaconda\\python.exe", "C:\\Users\\udayt\\Desktop\\Project\\job-portal\\script\\pythonScript.py")
+	cmd := exec.Command("python", "script\\pythonScript.py")
 	var stdin bytes.Buffer
 	stdin.Write(fileBytes)
 	cmd.Stdin = &stdin
@@ -66,4 +66,17 @@ func AddResumeLogic(db *mongo.Client, w http.ResponseWriter, r *http.Request) er
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(resume)
 	return nil
+}
+
+func GetResumeLogic(db *mongo.Client, userID string) (*model.Resume, error) {
+	resume, err := dataservice.GetResume(db, userID)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving resume from the database: %w", err)
+	}
+
+	if resume == nil {
+		return nil, fmt.Errorf("resume not found for user ID: %s", userID)
+	}
+
+	return resume, nil
 }
