@@ -17,6 +17,25 @@ def extract_technical_skills_from_pdf_content(pdf_content):
 
     if skills_match:
         extracted_text = skills_match.group(1).strip()
+        
+        # Convert periods to commas and ensure no spaces follow the commas
+        extracted_text = re.sub(r'\.\s*', ',', extracted_text)
+        # Remove spaces after words and before commas
+        extracted_text = re.sub(r'\s+,', ',', extracted_text)
+        # Remove specified words
+        words_to_remove = [
+            "Languages", "Web Technologies", "Cloud Services", "Amazon Web Services",
+            "Tools and Frameworks", "Build Tools", "Reporting Tools", "Databases",
+            "Web/Application Servers", "Unit Testing Frameworks", "Version Controller",
+            "Methodologies", "IDE Tools", "BI Tools", "Operating Systems",
+            "Monitoring Tools", "Protocols"
+        ]
+        for word in words_to_remove:
+            extracted_text = re.sub(r'\b{}\b'.format(re.escape(word)), '', extracted_text)
+        # Remove extra spaces and normalize comma spacing
+        extracted_text = re.sub(r'\s+', ' ', extracted_text).strip()
+        extracted_text = re.sub(r',\s*', ',', extracted_text)
+        
         return extracted_text
     else:
         return "Technical skills section not found."

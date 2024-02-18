@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func MatchResumeWithJob(db *mongo.Client, jobID string) ([]*model.Resume, error) {
+func MatchResumeWithJob(db *mongo.Client, jobID string) ([]*model.MatchedResume, error) {
 	job, err := dataservice.GetJobByID(db, jobID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve job listing: %w", err)
@@ -30,17 +30,11 @@ func MatchResumeWithJob(db *mongo.Client, jobID string) ([]*model.Resume, error)
 		matchScore := CalculateMatchScore(jobTechnicalSkills, resumeTechnicalSkills)
 		matchingResumes = append(matchingResumes, &model.MatchedResume{Resume: resume, MatchScore: matchScore})
 	}
-
 	sort.Slice(matchingResumes, func(i, j int) bool {
-		return matchingResumes[i].MatchScore < matchingResumes[j].MatchScore
+		return matchingResumes[i].MatchScore > matchingResumes[j].MatchScore
 	})
 
-	var sortedResumes []*model.Resume
-	for _, matchedResume := range matchingResumes {
-		sortedResumes = append(sortedResumes, matchedResume.Resume)
-	}
-
-	return sortedResumes, nil
+	return matchingResumes, nil
 }
 
 func CalculateMatchScore(jobTechnicalSkills []string, resumeTechnicalSkills string) float64 {
@@ -48,24 +42,29 @@ func CalculateMatchScore(jobTechnicalSkills []string, resumeTechnicalSkills stri
 	matchingSkills := 0
 
 	for _, jobSkill := range jobTechnicalSkills {
-		if containsSkill(resumeSkills, jobSkill) {
+		if containsSkill(resumeSkills, strings.ToLower(jobSkill)) {
 			matchingSkills++
 		}
 	}
 
-	matchScore := float64(matchingSkills) / float64(len(jobTechnicalSkills)) * 100
+	fmt.Println(matchingSkills)
+	matchScore := (float64(matchingSkills) / float64(len(jobTechnicalSkills))) * 100
 	return matchScore
 }
 
-// Helper function to split a string of technical skills into individual skills
+// Improved skill extraction to handle various separators and normalize skill names
 func extractSkillsFromString(technicalSkills string) []string {
-	return strings.Split(technicalSkills, ", ")
+	normalizedSkills := strings.ToLower(technicalSkills)
+	normalizedSkills = strings.ReplaceAll(normalizedSkills, ", ", ",")
+	normalizedSkills = strings.ReplaceAll(normalizedSkills, ",", ",")
+	return strings.Split(normalizedSkills, ",")
 }
 
-// Helper function to check if a slice of skills contains a particular skill
+// Adjusted to be case-insensitive and more flexible in matching
 func containsSkill(skills []string, skill string) bool {
+	skill = strings.ToLower(skill)
 	for _, s := range skills {
-		if s == skill {
+		if strings.TrimSpace(s) == skill {
 			return true
 		}
 	}
