@@ -1,7 +1,8 @@
 package main
 
 import (
-	api "Project/api/userManagement"
+	resumeApi "Project/api/resume"
+	userApi "Project/api/userManagement"
 	"context"
 	"fmt"
 	"log"
@@ -32,7 +33,8 @@ func main() {
 	}
 	fmt.Println("Connected to MongoDB!")
 	router := mux.NewRouter()
-	api.RegisterRoutes(router, client)
+	userApi.RegisterRoutes(router, client)
+	resumeApi.RegisterRoutes(router, client)
 
 	log.Println("Server starting on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", router))

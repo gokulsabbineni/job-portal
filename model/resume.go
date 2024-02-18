@@ -1,7 +1,6 @@
 package model
 
 type Resume struct {
-	UserID   int    `json:"id"`
-	Contents string `json: "resume`
-	ParsedOP string `json: "parsedop`
+	UserID          string `bson:"user_id" json:"id"`
+	TechnicalSkills string `bson:"technical_skills" json:"technicalSkills"`
 }
